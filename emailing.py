@@ -12,13 +12,13 @@ import main
 #app = Flask(__name__)
 mail = Mail(main.app)
 
-#main.app.config['MAIL_DEFAULT_SENDER'] = "noreply@flask.com"
+main.app.config['MAIL_DEFAULT_SENDER'] = "noreply@flask.com"
 main.app.config['MAIL_SERVER'] = "smtp.gmail.com"
 main.app.config['MAIL_PORT'] = 465
 main.app.config['MAIL_USE_TLS'] = False
 main.app.config['MAIL_USE_SSL'] = True
 #main.app.config['MAIL_DEBUG'] = False
-main.app.config['MAIL_USERNAME'] = "noreply@gmail.com"
+main.app.config['MAIL_USERNAME'] = "noreply@flask.com"
 main.app.config['MAIL_PASSWORD'] = "EMAIL_PASSWORD"
 
 def make_token(email):
@@ -47,7 +47,7 @@ def confirm_email(username, given_email):
     
 def send_email(to, token):
     #msg = Message("Email", recipients=[to], html=template, sender="noreply@flask.com")
-    msg = Message("Email", sender="noreply@gmail.com", recipients=[to])
+    msg = Message("Email", sender="noreply@flask.com", recipients=[to])
     link = url_for("view.complete", token=token, _external=True)
     msg.body = "Click on the link: {}".format(link)
     #mail.send(msg)
