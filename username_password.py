@@ -3,7 +3,7 @@ from flask import request, jsonify
 import json
 import os
 
-def create_account(username, password, password2, email):
+def create_account(username, password, password2, email, finger):
 
     if password != password2:
         return False
@@ -18,6 +18,7 @@ def create_account(username, password, password2, email):
             if user[0] == username:
                 return "username"
     kr.set_password("ProjectForClass", username, password)
+    new = json.dumps(finger)
     fin.write("%s %s\n" %(username, email))
     fin.close()
     return True
@@ -27,12 +28,18 @@ def delete_account(username, password):
 
     if password == actual_password:
         kr.delete_password("ProjectForClass", username)
-        fout = open("UserInfo.txt", "a+")
+        fout = open("UserInfo.txt", "r")
+        fin = open("holder.txt", "w")
         for line in fout:
             user = line.split(" ", 1)
-            if user[0] == username:
-                del(line)
-                #fout.write(line)
+            if user[0] != username:
+                fin.write(line)
+        fout.close()
+        fin.close()
+        fout = open("UserInfo.txt", "w")
+        fin = open("holder.txt", "r")
+        for line in fin:
+            fout.write(line)
     else:
         return False
     return True
