@@ -3,6 +3,7 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 import username_password as up
 import timebased as tb
 import emailing as em
+import fingerprint as finger
 from flask_mail import Message, Mail
 import json
 
@@ -19,7 +20,8 @@ def creation():
         pwd = request.form['pwd']
         pwd2 = request.form['pwd2']
         email = request.form['eme']
-        result = up.create_account(username, pwd, pwd2, email)
+        fing = finger.createFingerprint(username)
+        result = up.create_account(username, pwd, pwd2, email, fing)
         if result == True:
             return render_template("successful_login.html")
         elif result == "username":
@@ -59,11 +61,6 @@ def logging_in():
         return result
     return render_template("login.html")
 
-'''@view.route("/fingerprint", methods=['POST', 'GET'])
-def login_finger():
-    if request.method == 'POST':
-        finger = request.form['finger']'''
-
 @view.route("/emailing", methods=['POST', 'GET'])
 def emailing():
     #form = RegisterForm(request.form)
@@ -94,6 +91,15 @@ def after_email(token):
     except SignatureExpired:
         return '<h1> Token expired </h1>'
     return '<h1> Successfully completed email authorization </h1>'
+
+@view.route("/fingerprint", methods=['POST', 'GET'])
+def login_finger():
+    if request.method == 'POST':
+        user = request.form['username']
+        fing = finger.createFingerprint(user)
+        finger.verifyFingerprint(fing)
+        return render_template("successful_login.html")
+    return render_template("requestFingerprint.html")
 
 @view.route("/complete")
 def complete():
